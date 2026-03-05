@@ -4,7 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
+import tn.esprit.oussemamsehliarctic10.entities.Projects;
 import tn.esprit.oussemamsehliarctic10.repositories.IAgents;
+import tn.esprit.oussemamsehliarctic10.repositories.IProjects;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public class AgentsServicesImpl implements AgentsServices {
 
     private final IAgents agentsRepository;
+    private final IProjects projectsRepository;
 
     @Override
     public Agents addAgents(Agents agents) {
@@ -43,5 +46,25 @@ public class AgentsServicesImpl implements AgentsServices {
     @Override
     public List<Agents> getAll() {
         return agentsRepository.findAll();
+    }
+
+    @Override
+    public Agents addAndassignToProject(Agents agent) {
+
+        // Sauvegarder l'agent
+        Agents savedAgent = agentsRepository.save(agent);
+
+        // Récupérer tous les projets
+        List<Projects> projectsList = projectsRepository.findAll();
+
+        // Boucle for correcte
+        for (Projects aProject : projectsList) {
+
+            aProject.getAgents().add(savedAgent);   // ajout agent au projet
+
+            projectsRepository.save(aProject);     // sauvegarde projet
+        }
+
+        return savedAgent;
     }
 }

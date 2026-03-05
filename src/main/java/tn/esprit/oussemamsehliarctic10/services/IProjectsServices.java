@@ -22,4 +22,6 @@ public interface IProjectsServices {
 
     // Relation spécifique
     List<Agents> getAgents(Long idProject);
+
+    Projects assignedProject(Long projectId, Long agentId);
 }

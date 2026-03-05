@@ -17,4 +17,6 @@ public interface AgentsServices {
     Agents getById(Long id);
 
     List<Agents> getAll();
+
+    Agents addAndassignToProject (Agents agents);
 }

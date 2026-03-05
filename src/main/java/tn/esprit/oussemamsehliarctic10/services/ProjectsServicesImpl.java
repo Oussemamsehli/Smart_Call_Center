@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
 import tn.esprit.oussemamsehliarctic10.entities.Projects;
+import tn.esprit.oussemamsehliarctic10.repositories.IAgents;
 import tn.esprit.oussemamsehliarctic10.repositories.IProjects;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProjectsServicesImpl implements IProjectsServices {
 
     private final IProjects projectsRepository;
+    private final IAgents agentsRepository;
 
     @Override
     public Projects addProject(Projects project) {
@@ -56,5 +58,19 @@ public class ProjectsServicesImpl implements IProjectsServices {
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
 
         return new ArrayList<>(project.getAgents());
+    }
+
+    @Override
+    public Projects assignedProject(Long projectId, Long agentId) {
+
+        Projects project = projectsRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
+
+        Agents agent = agentsRepository.findById(agentId)
+                .orElseThrow(() -> new EntityNotFoundException("Agent not found"));
+
+        project.getAgents().add(agent);   // affectation (many-to-many)
+
+        return projectsRepository.save(project);
     }
 }

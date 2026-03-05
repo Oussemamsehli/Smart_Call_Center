@@ -6,6 +6,7 @@ import tn.esprit.oussemamsehliarctic10.entities.Calls;
 import tn.esprit.oussemamsehliarctic10.services.ICallsServices;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,4 +45,40 @@ public class CallRestController {
     public void deleteCalls(@RequestBody Calls calls) {
         callsServices.deleteCalls(calls);
     }
+
+    @PutMapping("/assignToAgent/{callsId}/{agentId}")
+    public Calls assignToAgent (@PathVariable Long callsId, @PathVariable Long agentId) {
+
+        return callsServices.assignToAgent(callsId, agentId);
+
+    }
+
+    @PostMapping("/assignToAgent/{agentId}")
+    public Calls assignToAgent(@RequestBody Calls call,
+                               @PathVariable Long agentId) {
+
+        return callsServices.assignToAgent(call, agentId);
+    }
+
+    @PutMapping("/assignToAISystem/{callId}/{aiSystemId}")
+    public Calls assignToAISystem(@PathVariable Long callId, @PathVariable Long aiSystemId) {
+        return callsServices.assignCallToAISystem(callId, aiSystemId);
+    }
+
+    @PostMapping("/requiresHumanAgent")
+    public boolean callRequiresHumanAgent(@RequestBody Calls call) {
+        return callsServices.callRequiresHumanAgent(call);
+    }
+
+    @PutMapping("/autoAssign")
+    public void autoAssignCallsToAgents(@RequestBody Set<Long> callIds) {
+        callsServices.autoAssignCallsToAgents(callIds);
+    }
+
+    @PutMapping("/assignAll")
+    public void assignCallsToAgents(@RequestBody Set<Long> callsIds) {
+        callsServices.assignCallsToAgents(callsIds);
+    }
+
+
 }
