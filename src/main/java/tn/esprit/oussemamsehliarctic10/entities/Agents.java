@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -27,13 +28,19 @@ public class Agents implements Serializable {
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    Set<CallSkills> skills;
+    Set<CallSkills> skills = new HashSet<>();
 
     @OneToMany(mappedBy = "assignedAgent")
     @JsonIgnore
-    Set<Calls> assignedCalls;
+    Set<Calls> assignedCalls = new HashSet<>();
 
-    @ManyToMany(mappedBy = "agents")   //  lié à Projects.agents
+    @ManyToMany(mappedBy = "agents")
     @JsonIgnore
-    Set<Projects> projects;
+    Set<Projects> projects = new HashSet<>();
+
+    //  Relation ManyToOne vers AISystems
+    // Un agent peut être supervisé par un AI System
+    @ManyToOne
+    @JsonIgnore
+    AISystems supervisingAiSystem;
 }
