@@ -20,9 +20,7 @@ public class ProjectsServicesImpl implements IProjectsServices {
 
     @Override
     public Projects addProject(Projects project) {
-        if (project.getProjectDetails() != null) {
-            project.getProjectDetails().setProject(project); //  lien owner
-        }
+        //  Plus besoin de setProject() car Projects est maintenant le owner
         return projectsRepository.save(project);
     }
 
@@ -62,15 +60,13 @@ public class ProjectsServicesImpl implements IProjectsServices {
 
     @Override
     public Projects assignedProject(Long projectId, Long agentId) {
-
         Projects project = projectsRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
 
         Agents agent = agentsRepository.findById(agentId)
                 .orElseThrow(() -> new EntityNotFoundException("Agent not found"));
 
-        project.getAgents().add(agent);   // affectation (many-to-many)
-
+        project.getAgents().add(agent);
         return projectsRepository.save(project);
     }
 }
