@@ -20,24 +20,26 @@ public class CallsServicesImpl implements ICallsServices {
     private final IAgents agentsRepository;
     private final IASystems aiSystemsRepository;
 
-
-
     @Override
     public Calls addCalls(Calls calls) {
-
         calls.setCallsDateTime(LocalDateTime.now());
         calls.setStatus(CallStatus.ON_HOLD);
-
-        return callsRepository.save(calls);    }
-
+        return callsRepository.save(calls);
+    }
 
     @Override
     public Calls updateCalls(Calls calls) {
-        return callsRepository.save(calls);    }
+        return callsRepository.save(calls);
+    }
 
     @Override
     public void deleteCalls(Long id) {
         callsRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteCalls(Calls calls) {
+        callsRepository.delete(calls);
     }
 
     @Override
@@ -51,12 +53,6 @@ public class CallsServicesImpl implements ICallsServices {
         return callsRepository.findAll();
     }
 
-
-    @Override
-    public void deleteCalls(Calls calls) {
-        callsRepository.delete(calls);
-    }
-
     @Override
     public Calls assignToAgent(Long callsId, Long agentId) {
         Calls calls = callsRepository.findById(callsId)
@@ -65,15 +61,12 @@ public class CallsServicesImpl implements ICallsServices {
         Agents agent = agentsRepository.findById(agentId)
                 .orElseThrow(() -> new EntityNotFoundException("Agent not found"));
 
-        // L'agent doit être disponible
         if (!agent.getAvailable()) {
             throw new RuntimeException("Agent is not available");
         }
 
         calls.setAssignedAgent(agent);
-        // L'appel passe à IN_PROGRESS
         calls.setStatus(CallStatus.IN_PROGRESS);
-        // L'agent devient indisponible
         agent.setAvailable(false);
 
         agentsRepository.save(agent);
@@ -97,8 +90,6 @@ public class CallsServicesImpl implements ICallsServices {
         return callsRepository.save(call);
     }
 
-
-
     @Override
     public Calls assignCallToAISystem(Long callId, Long aiSystemId) {
         Calls call = callsRepository.findById(callId)
@@ -111,9 +102,8 @@ public class CallsServicesImpl implements ICallsServices {
             throw new RuntimeException("AI System is not available");
         }
 
-        long activeCallsCount = aiSystem.getAssignedCalls().stream()
-                .filter(c -> c.getStatus() == CallStatus.IN_PROGRESS || c.getStatus() == CallStatus.ON_HOLD)
-                .count();
+        //  Utilise maintenant le repository 
+        long activeCallsCount = callsRepository.countByAssignedAiSystem(aiSystem);
 
         if (activeCallsCount >= 2) {
             throw new RuntimeException("AI System already handles 2 calls");
@@ -122,15 +112,18 @@ public class CallsServicesImpl implements ICallsServices {
         call.setAssignedAiSystem(aiSystem);
         call.setStatus(CallStatus.IN_PROGRESS);
 
+        // Si l'IA atteint 2 appels, elle devient indisponible
+        if (activeCallsCount + 1 >= 2) {
+            aiSystem.setAvailable(false);
+            aiSystemsRepository.save(aiSystem);
+        }
+
         return callsRepository.save(call);
     }
 
-
     @Override
     public boolean callRequiresHumanAgent(Calls call) {
-        if (call.getRequiredSkills() == null) {
-            return false;
-        }
+        if (call.getRequiredSkills() == null) return false;
         return call.getRequiredSkills().contains(CallSkills.TECHNICAL_SUPPORT);
     }
 
@@ -140,12 +133,9 @@ public class CallsServicesImpl implements ICallsServices {
             Calls call = callsRepository.findById(callId)
                     .orElseThrow(() -> new EntityNotFoundException("Call not found: " + callId));
 
-            if (!callRequiresHumanAgent(call)) {
-                continue;
-            }
+            if (!callRequiresHumanAgent(call)) continue;
 
             List<Agents> allAgents = agentsRepository.findAll();
-
             for (Agents agent : allAgents) {
                 if (agent.getAvailable() && agent.getSkills() != null
                         && agent.getSkills().stream()
@@ -166,12 +156,9 @@ public class CallsServicesImpl implements ICallsServices {
             Calls call = callsRepository.findById(callId)
                     .orElseThrow(() -> new EntityNotFoundException("Call not found: " + callId));
 
-            if (!callRequiresHumanAgent(call)) {
-                continue;
-            }
+            if (!callRequiresHumanAgent(call)) continue;
 
             List<Agents> allAgents = agentsRepository.findAll();
-
             for (Agents agent : allAgents) {
                 if (agent.getAvailable() && agent.getSkills() != null
                         && agent.getSkills().stream()
@@ -189,5 +176,40 @@ public class CallsServicesImpl implements ICallsServices {
         }
     }
 
+    // Query Methods implementations
 
+    @Override
+    public List<Calls> findByStatus(CallStatus status) {
+        return callsRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<Calls> findByStatusAndAssignedAgent_AgentId(CallStatus status, long agentId) {
+        return callsRepository.findByStatusAndAssignedAgent_AgentId(status, agentId);
+    }
+
+    @Override
+    public List<Calls> findByAssignedAgentIsNull() {
+        return callsRepository.findByAssignedAgentIsNull();
+    }
+
+    @Override
+    public List<Calls> findByRequiredSkillsContains(CallSkills skill) {
+        return callsRepository.findByRequiredSkillsContains(skill);
+    }
+
+    @Override
+    public List<Calls> findTop5ByRequiredSkillsContainsOrderByCallsDateTimeAsc(CallSkills skill) {
+        return callsRepository.findTop5ByRequiredSkillsContainsOrderByCallsDateTimeAsc(skill);
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return callsRepository.existsByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public long countByStatus(CallStatus status) {
+        return callsRepository.countByStatus(status);
+    }
 }
