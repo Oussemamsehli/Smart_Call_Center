@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -27,15 +28,18 @@ public class Projects implements Serializable {
     LocalDate startDate;
     LocalDate endDate;
 
-    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
-    private ProjectDetails projectDetails;
+    //  Projects est maintenant le OWNER de la relation
+    // La FK project_details_id sera dans la table projects
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "project_details_id")
+    ProjectDetails projectDetails;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_agents",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "agent_id")
     )
     @JsonIgnore
-    Set<Agents> agents;
+    Set<Agents> agents = new HashSet<>();
 }

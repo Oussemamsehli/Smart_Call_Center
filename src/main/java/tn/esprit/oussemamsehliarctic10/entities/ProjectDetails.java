@@ -1,6 +1,5 @@
 package tn.esprit.oussemamsehliarctic10.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,9 +23,6 @@ public class ProjectDetails implements Serializable {
     Double budget;
     String client;
 
-
-
-    @OneToOne
-    @JoinColumn(name = "project_projects_id", unique = true)
-    private Projects project;
+    //  Plus de lien retour vers Projects
+    // Projects est le owner, ProjectDetails est simple
 }
