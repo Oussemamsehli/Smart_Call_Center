@@ -2,6 +2,7 @@ package tn.esprit.oussemamsehliarctic10.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.oussemamsehliarctic10.dto.ProjectDTO;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
 import tn.esprit.oussemamsehliarctic10.entities.Projects;
 import tn.esprit.oussemamsehliarctic10.services.IProjectsServices;
@@ -16,12 +17,12 @@ public class ProjectRestController {
     private final IProjectsServices projectsServices;
 
     @PostMapping("/add")
-    public Projects addProject(@RequestBody Projects project) {
+    public ProjectDTO addProject(@RequestBody Projects project) {
         return projectsServices.addProject(project);
     }
 
     @PutMapping("/update")
-    public Projects updateProject(@RequestBody Projects project) {
+    public ProjectDTO updateProject(@RequestBody Projects project) {
         return projectsServices.updateProject(project);
     }
 
@@ -31,12 +32,12 @@ public class ProjectRestController {
     }
 
     @GetMapping("/get/{id}")
-    public Projects getById(@PathVariable Long id) {
+    public ProjectDTO getById(@PathVariable Long id) {
         return projectsServices.getById(id);
     }
 
     @GetMapping("/all")
-    public List<Projects> getAll() {
+    public List<ProjectDTO> getAll() {
         return projectsServices.getAllProjects();
     }
 
@@ -50,15 +51,14 @@ public class ProjectRestController {
         return projectsServices.getAgents(id);
     }
 
-
-
-    @PutMapping("/assignToAgents/{projectId}/{agentId}")
-    public Projects assignedProject(@PathVariable Long projectId,
-                                    @PathVariable Long agentId) {
-
-        return projectsServices.assignedProject(projectId, agentId);
+    @GetMapping("/details/{id}")
+    public ProjectDTO getProjectDetails(@PathVariable Long id) {
+        return projectsServices.getProjectDetails(id);
     }
 
-
-
+    @PutMapping("/assignToAgents/{projectId}/{agentId}")
+    public ProjectDTO assignedProject(@PathVariable Long projectId,
+                                      @PathVariable Long agentId) {
+        return projectsServices.assignedProject(projectId, agentId);
+    }
 }

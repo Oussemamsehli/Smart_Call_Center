@@ -3,8 +3,10 @@ package tn.esprit.oussemamsehliarctic10.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tn.esprit.oussemamsehliarctic10.dto.ProjectDTO;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
 import tn.esprit.oussemamsehliarctic10.entities.Projects;
+import tn.esprit.oussemamsehliarctic10.mapper.ProjectMapper;
 import tn.esprit.oussemamsehliarctic10.repositories.IAgents;
 import tn.esprit.oussemamsehliarctic10.repositories.IProjects;
 
@@ -17,16 +19,16 @@ public class ProjectsServicesImpl implements IProjectsServices {
 
     private final IProjects projectsRepository;
     private final IAgents agentsRepository;
+    private final ProjectMapper projectMapper;
 
     @Override
-    public Projects addProject(Projects project) {
-        //  Plus besoin de setProject() car Projects est maintenant le owner
-        return projectsRepository.save(project);
+    public ProjectDTO addProject(Projects project) {
+        return projectMapper.toDTO(projectsRepository.save(project));
     }
 
     @Override
-    public Projects updateProject(Projects project) {
-        return projectsRepository.save(project);
+    public ProjectDTO updateProject(Projects project) {
+        return projectMapper.toDTO(projectsRepository.save(project));
     }
 
     @Override
@@ -40,26 +42,28 @@ public class ProjectsServicesImpl implements IProjectsServices {
     }
 
     @Override
-    public Projects getById(Long id) {
-        return projectsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id));
+    public ProjectDTO getById(Long id) {
+        return projectMapper.toDTO(projectsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id)));
     }
 
     @Override
-    public List<Projects> getAllProjects() {
-        return projectsRepository.findAll();
+    public List<ProjectDTO> getAllProjects() {
+        return projectsRepository.findAll()
+                .stream()
+                .map(projectMapper::toDTO)
+                .toList();
     }
 
     @Override
     public List<Agents> getAgents(Long idProject) {
         Projects project = projectsRepository.findById(idProject)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-
         return new ArrayList<>(project.getAgents());
     }
 
     @Override
-    public Projects assignedProject(Long projectId, Long agentId) {
+    public ProjectDTO assignedProject(Long projectId, Long agentId) {
         Projects project = projectsRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
 
@@ -67,6 +71,12 @@ public class ProjectsServicesImpl implements IProjectsServices {
                 .orElseThrow(() -> new EntityNotFoundException("Agent not found"));
 
         project.getAgents().add(agent);
-        return projectsRepository.save(project);
+        return projectMapper.toDTO(projectsRepository.save(project));
+    }
+
+    @Override
+    public ProjectDTO getProjectDetails(Long id) {
+        return projectMapper.toDTO(projectsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id)));
     }
 }

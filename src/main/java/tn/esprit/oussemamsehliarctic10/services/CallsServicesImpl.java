@@ -102,7 +102,7 @@ public class CallsServicesImpl implements ICallsServices {
             throw new RuntimeException("AI System is not available");
         }
 
-        //  Utilise maintenant le repository 
+        //  Utilise maintenant le repository
         long activeCallsCount = callsRepository.countByAssignedAiSystem(aiSystem);
 
         if (activeCallsCount >= 2) {
