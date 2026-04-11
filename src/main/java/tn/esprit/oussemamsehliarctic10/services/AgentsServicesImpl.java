@@ -4,11 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
+import tn.esprit.oussemamsehliarctic10.entities.CallSkills;
 import tn.esprit.oussemamsehliarctic10.entities.Projects;
 import tn.esprit.oussemamsehliarctic10.repositories.IAgents;
 import tn.esprit.oussemamsehliarctic10.repositories.IProjects;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -66,5 +68,21 @@ public class AgentsServicesImpl implements AgentsServices {
         }
 
         return savedAgent;
+    }
+
+
+    @Override
+    public List<Agents> getAvailableAgents() {
+        return agentsRepository.findByAvailableTrue();
+    }
+
+    @Override
+    public List<Agents> getAgentsBySkill(CallSkills skill) {
+        return agentsRepository.findBySkillsContaining(skill);
+    }
+
+    @Override
+    public List<Agents> getAvailableAgentsBySkills(Set<CallSkills> skills) {
+        return agentsRepository.findByAvailableTrueAndSkillsIn(skills);
     }
 }

@@ -3,9 +3,11 @@ package tn.esprit.oussemamsehliarctic10.Controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.oussemamsehliarctic10.entities.Agents;
+import tn.esprit.oussemamsehliarctic10.entities.CallSkills;
 import tn.esprit.oussemamsehliarctic10.services.AgentsServices;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -47,5 +49,22 @@ public class AgentRestController {
     @PostMapping("/addAndAssignAllProjects")
     public Agents addAndAssignAllProjects(@RequestBody Agents agent) {
         return agentsServices.addAndassignToProject(agent);
+    }
+    // Q1 : GET /agents/available
+    @GetMapping("/available")
+    public List<Agents> getAvailableAgents() {
+        return agentsServices.getAvailableAgents();
+    }
+
+    // Q2 : GET /agents/bySkill/TECHNICAL_SUPPORT
+    @GetMapping("/bySkill/{skill}")
+    public List<Agents> getAgentsBySkill(@PathVariable CallSkills skill) {
+        return agentsServices.getAgentsBySkill(skill);
+    }
+
+    // Q3 : POST /agents/availableBySkills  (body = ["SALES", "BILLING"])
+    @PostMapping("/availableBySkills")
+    public List<Agents> getAvailableAgentsBySkills(@RequestBody Set<CallSkills> skills) {
+        return agentsServices.getAvailableAgentsBySkills(skills);
     }
 }
