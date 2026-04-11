@@ -212,4 +212,25 @@ public class CallsServicesImpl implements ICallsServices {
     public long countByStatus(CallStatus status) {
         return callsRepository.countByStatus(status);
     }
+
+
+    @Override
+    public List<Calls> findCallsByAgent(Long idAgent) {
+        return callsRepository.findCallsByAgent(idAgent);
+    }
+
+    @Override
+    public List<Calls> findCallsBySkill(CallSkills skill) {
+        return callsRepository.findCallsBySkill(skill);
+    }
+
+    @Override
+    public List<Object[]> countCallsByStatus() {
+        return callsRepository.countCallsByStatus();
+    }
+
+    @Override
+    public List<Calls> findTodayCalls() {
+        return callsRepository.findTodayCalls();
+    }
 }

@@ -35,4 +35,15 @@ public interface ICallsServices {
     List<Calls> findTop5ByRequiredSkillsContainsOrderByCallsDateTimeAsc(CallSkills skill);
     boolean existsByPhoneNumber(String phoneNumber);
     long countByStatus(CallStatus status);
+
+
+    // JPQL
+    List<Calls> findCallsByAgent(Long idAgent);
+    List<Calls> findCallsBySkill(CallSkills skill);
+    List<Object[]> countCallsByStatus();
+    List<Calls> findTodayCalls();
+
+
+
+
 }

@@ -67,4 +67,23 @@ public class AgentRestController {
     public List<Agents> getAvailableAgentsBySkills(@RequestBody Set<CallSkills> skills) {
         return agentsServices.getAvailableAgentsBySkills(skills);
     }
+
+
+    // Q3 : Agents par compétence (JPQL)
+    @GetMapping("/jpql/bySkill/{skill}")
+    public List<Agents> findAgentsBySkill(@PathVariable CallSkills skill) {
+        return agentsServices.findAgentsBySkill(skill);
+    }
+
+    // Q4 : Agent le plus compétent pour un appel
+    @GetMapping("/mostCompetent/{callsId}")
+    public Agents getMostCompetentAgent(@PathVariable Long callsId) {
+        return agentsServices.findMostCompetentAgentForCall(callsId);
+    }
+
+    // Q6 : Agents ayant traité plus de 5 appels
+    @GetMapping("/topActive")
+    public List<Object[]> getTopActiveAgents() {
+        return agentsServices.findTopActiveAgents();
+    }
 }

@@ -27,4 +27,10 @@ public interface AgentsServices {
     List<Agents> getAgentsBySkill(CallSkills skill);
 
     List<Agents> getAvailableAgentsBySkills(Set<CallSkills> skills);
+
+    List<Agents> findAgentsBySkill(CallSkills skill);
+
+    Agents findMostCompetentAgentForCall(Long callsId);
+
+    List<Object[]> findTopActiveAgents();
 }

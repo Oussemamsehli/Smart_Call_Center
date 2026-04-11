@@ -130,4 +130,29 @@ public class CallRestController {
     public long countByStatus(@PathVariable CallStatus status) {
         return callsServices.countByStatus(status);
     }
+
+    // Q1 : Appels d'un agent
+    @GetMapping("/byAgent/{idAgent}")
+    public List<Calls> getCallsByAgent(@PathVariable Long idAgent) {
+        return callsServices.findCallsByAgent(idAgent);
+    }
+
+    // Q2 : Appels par compétence
+    @GetMapping("/bySkill/{skill}")
+    public List<Calls> getCallsBySkill(@PathVariable CallSkills skill) {
+        return callsServices.findCallsBySkill(skill);
+    }
+
+    // Q5 : Nombre d'appels par statut
+    @GetMapping("/countByStatus")
+    public List<Object[]> countCallsByStatus() {
+        return callsServices.countCallsByStatus();
+    }
+
+    // Q7 : Appels d'aujourd'hui
+    @GetMapping("/today")
+    public List<Calls> getTodayCalls() {
+        return callsServices.findTodayCalls();
+    }
+
 }

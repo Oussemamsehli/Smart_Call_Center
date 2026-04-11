@@ -85,4 +85,19 @@ public class AgentsServicesImpl implements AgentsServices {
     public List<Agents> getAvailableAgentsBySkills(Set<CallSkills> skills) {
         return agentsRepository.findByAvailableTrueAndSkillsIn(skills);
     }
+
+    @Override
+    public List<Agents> findAgentsBySkill(CallSkills skill) {
+        return agentsRepository.findAgentsBySkill(skill);
+    }
+
+    @Override
+    public Agents findMostCompetentAgentForCall(Long callsId) {
+        return agentsRepository.findMostCompetentAgentForCall(callsId);
+    }
+
+    @Override
+    public List<Object[]> findTopActiveAgents() {
+        return agentsRepository.findTopActiveAgents();
+    }
 }
